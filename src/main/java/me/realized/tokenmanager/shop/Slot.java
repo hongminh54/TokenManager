@@ -59,15 +59,18 @@ public class Slot {
         this.commands = commands;
         this.usePermission = usePermission;
         this.confirmPurchase = confirmPurchase;
-        commands.replaceAll(command -> {
-            command = Placeholders.replace(command, cost, "price", "cost");
 
-            if (command.startsWith("/")) {
-                command = command.substring(1);
-            }
+        if (this.commands != null) {
+            this.commands.replaceAll(command -> {
+                command = Placeholders.replace(command, cost, "price", "cost");
 
-            return command;
-        });
+                if (command.startsWith("/")) {
+                    command = command.substring(1);
+                }
+
+                return command;
+            });
+        }
     }
 
     public boolean purchase(final Player player, final boolean confirmPurchase, final boolean close) {

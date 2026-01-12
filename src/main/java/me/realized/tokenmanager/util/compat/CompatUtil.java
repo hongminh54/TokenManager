@@ -2,6 +2,8 @@ package me.realized.tokenmanager.util.compat;
 
 import me.realized.tokenmanager.util.NumberUtil;
 import java.lang.reflect.Method;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
@@ -11,6 +13,8 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 public final class CompatUtil {
+
+    private static final Pattern BUKKIT_VERSION_PATTERN = Pattern.compile("\\b1\\.(\\d{1,2})\\b");
 
     private static final long SUB_VERSION;
     private static final Method ITEMSTACK_GET_DURABILITY;
@@ -25,8 +29,7 @@ public final class CompatUtil {
     private static final Method POTIONMETA_SET_BASE_POTION_DATA;
 
     static {
-        final String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        SUB_VERSION = NumberUtil.parseLong(packageName.substring(packageName.lastIndexOf('.') + 1).split("_")[1]).orElse(0);
+        SUB_VERSION = detectSubVersion();
 
         ITEMSTACK_GET_DURABILITY = ReflectionUtil.getMethodUnsafe(ItemStack.class, "getDurability");
         ITEMSTACK_SET_DURABILITY = ReflectionUtil.getMethodUnsafe(ItemStack.class, "setDurability", short.class);
@@ -45,6 +48,37 @@ public final class CompatUtil {
             "setBasePotionData",
             ReflectionUtil.getClassUnsafe("org.bukkit.potion.PotionData")
         );
+    }
+
+    private static long detectSubVersion() {
+        try {
+            final String packageName = Bukkit.getServer().getClass().getPackage().getName();
+            final String token = packageName.substring(packageName.lastIndexOf('.') + 1);
+
+            if (token.startsWith("v") && token.contains("_")) {
+                final String[] parts = token.split("_");
+                if (parts.length > 1) {
+                    final java.util.OptionalLong parsed = NumberUtil.parseLong(parts[1]);
+                    if (parsed.isPresent()) {
+                        return parsed.getAsLong();
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+            // fallback below
+        }
+
+        try {
+            final String bukkitVersion = Bukkit.getBukkitVersion();
+            final Matcher matcher = BUKKIT_VERSION_PATTERN.matcher(bukkitVersion);
+            if (matcher.find()) {
+                return NumberUtil.parseLong(matcher.group(1)).orElse(0);
+            }
+        } catch (Exception ignored) {
+            return 0;
+        }
+
+        return 0;
     }
 
     private CompatUtil() {}
