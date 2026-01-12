@@ -118,10 +118,12 @@ public class TokenManagerPlugin extends JavaPlugin implements TokenManager, List
      * @return true if load was successful, otherwise false
      */
     private boolean load() {
-        for (final Loadable loadable : loadables) {
+        for (int i = 0; i < loadables.size(); i++) {
+            final Loadable loadable = loadables.get(i);
+
             try {
                 loadable.handleLoad();
-                lastLoad = loadables.indexOf(loadable);
+                lastLoad = i;
                 Log.info("Loaded " + loadable.getClass().getSimpleName() + ".");
             } catch (Exception ex) {
                 Log.error("There was an error while loading " + loadable.getClass().getSimpleName()
@@ -139,12 +141,10 @@ public class TokenManagerPlugin extends JavaPlugin implements TokenManager, List
      * @return true if unload was successful, otherwise false
      */
     private boolean unload() {
-        for (final Loadable loadable : Lists.reverse(loadables)) {
-            try {
-                if (loadables.indexOf(loadable) > lastLoad) {
-                    continue;
-                }
+        for (int i = Math.min(lastLoad, loadables.size() - 1); i >= 0; i--) {
+            final Loadable loadable = loadables.get(i);
 
+            try {
                 loadable.handleUnload();
                 Log.info("Unloaded " + loadable.getClass().getSimpleName() + ".");
             } catch (Exception ex) {

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.OptionalLong;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.util.Reloadable;
+import me.realized.tokenmanager.util.compat.CompatUtil;
 import me.realized.tokenmanager.util.config.AbstractConfiguration;
 import org.bukkit.Material;
 import org.bukkit.configuration.MemorySection;
@@ -84,7 +85,7 @@ public class WorthConfig extends AbstractConfiguration<TokenManagerPlugin> imple
 
         OptionalLong worthOf(final ItemStack item) {
             if (extraWorth != null) {
-                final Long value = extraWorth.get(item.getDurability());
+                final Long value = extraWorth.get((short) CompatUtil.getDurability(item));
 
                 if (value != null) {
                     return OptionalLong.of(value * item.getAmount());

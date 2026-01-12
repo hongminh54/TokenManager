@@ -34,6 +34,7 @@ public class SpawnEggs extends CompatBase {
             ex.printStackTrace();
         }
 
-        return null;
+        final Material fallback = Material.getMaterial("MONSTER_EGG");
+        return fallback != null ? new ItemStack(fallback) : new ItemStack(Material.AIR);
     }
 }

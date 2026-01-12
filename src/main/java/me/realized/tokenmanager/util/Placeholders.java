@@ -15,14 +15,16 @@ public final class Placeholders {
 
         if (meta.hasLore()) {
             final List<String> lore = meta.getLore();
-            lore.replaceAll(line -> {
-                for (final String placeholder : placeholders) {
-                    line = value instanceof Number ? replace(line, (Number) value, placeholder) : line.replace("%" + placeholder + "%", String.valueOf(value));
-                }
+            if (lore != null) {
+                lore.replaceAll(line -> {
+                    for (final String placeholder : placeholders) {
+                        line = value instanceof Number ? replace(line, (Number) value, placeholder) : line.replace("%" + placeholder + "%", String.valueOf(value));
+                    }
 
-                return line;
-            });
-            meta.setLore(lore);
+                    return line;
+                });
+                meta.setLore(lore);
+            }
         }
 
         if (meta.hasDisplayName()) {

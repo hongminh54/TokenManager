@@ -29,6 +29,10 @@ public final class ReflectionUtil {
     }
 
     public static Method getMethodUnsafe(final Class<?> clazz, final String name, final Class<?>... parameters) {
+        if (clazz == null) {
+            return null;
+        }
+
         try {
             return clazz.getMethod(name, parameters);
         } catch (NoSuchMethodException ex) {

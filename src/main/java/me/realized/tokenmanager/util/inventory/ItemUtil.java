@@ -26,7 +26,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
@@ -42,7 +41,10 @@ public final class ItemUtil {
             enchantments.put(enchantment.getName(), enchantment);
 
             if (!CompatUtil.isPre1_13()) {
-                enchantments.put(enchantment.getKey().getKey(), enchantment);
+                final String key = CompatUtil.getEnchantmentKey(enchantment);
+                if (key != null) {
+                    enchantments.put(key, enchantment);
+                }
             }
         });
         enchantments.put("power", Enchantment.ARROW_DAMAGE);
@@ -116,7 +118,7 @@ public final class ItemUtil {
         // TEMP: Allow confirm button item loading in 1.13
         if (!CompatUtil.isPre1_13()) {
             if (materialData[0].equalsIgnoreCase("STAINED_CLAY")) {
-                material = Material.TERRACOTTA;
+                material = Material.matchMaterial("TERRACOTTA");
 
                 if (materialData.length > 1) {
                     material = Terracottas.from((short) NumberUtil.parseLong(materialData[1]).orElse(0));
@@ -142,8 +144,9 @@ public final class ItemUtil {
                     }
 
                     final PotionMeta meta = (PotionMeta) result.getItemMeta();
-                    meta.setBasePotionData(new PotionData(type, values.contains("extended"), values.contains("strong")));
-                    result.setItemMeta(meta);
+                    if (CompatUtil.setBasePotionData(meta, type.name(), values.contains("extended"), values.contains("strong"))) {
+                        result.setItemMeta(meta);
+                    }
                 } else if (CompatUtil.isPre1_13() && material.name().equals("MONSTER_EGG")) {
                     final EntityType type;
 
@@ -158,7 +161,7 @@ public final class ItemUtil {
             final OptionalLong value;
 
             if ((value = NumberUtil.parseLong(materialData[1])).isPresent()) {
-                result.setDurability((short) value.getAsLong());
+                CompatUtil.setDurability(result, (int) value.getAsLong());
             }
         }
 
@@ -227,7 +230,7 @@ public final class ItemUtil {
             if (CompatUtil.isPre1_12()) {
                 meta.spigot().setUnbreakable(true);
             } else {
-                meta.setUnbreakable(true);
+                CompatUtil.setUnbreakable(meta, true);
             }
 
             item.setItemMeta(meta);
@@ -277,7 +280,7 @@ public final class ItemUtil {
             if (value.length() > 16) {
                 Skulls.setSkull(skullMeta, value);
             } else {
-                skullMeta.setOwner(value);
+                CompatUtil.setSkullOwner(skullMeta, null, value);
             }
 
             item.setItemMeta(skullMeta);
@@ -291,7 +294,7 @@ public final class ItemUtil {
         }
 
         if (key.equalsIgnoreCase("custommodeldata") && !CompatUtil.isPre1_14()) {
-            meta.setCustomModelData(Integer.parseInt(value));
+            CompatUtil.setCustomModelData(meta, Integer.parseInt(value));
             item.setItemMeta(meta);
         }
     }

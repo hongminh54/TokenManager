@@ -46,7 +46,7 @@ public final class GUIBuilder {
         for (int slot = 0; slot < gui.getSize(); slot++) {
             final ItemStack target = gui.getItem(slot);
 
-            if (target != null && target.getType() != Material.AIR) {
+            if (target == null || target.getType() == Material.AIR) {
                 gui.setItem(slot, item);
             }
         }
@@ -90,7 +90,10 @@ public final class GUIBuilder {
                         break;
                     }
 
-                    inventory.setItem(row * 9 + i, keys.get(pattern.charAt(i)).clone());
+                    final ItemStack item = keys.get(pattern.charAt(i));
+                    if (item != null) {
+                        inventory.setItem(row * 9 + i, item.clone());
+                    }
                 }
             }
         }

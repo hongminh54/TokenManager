@@ -8,6 +8,7 @@ import me.realized.tokenmanager.shop.Shop;
 import me.realized.tokenmanager.shop.Slot;
 import me.realized.tokenmanager.shop.gui.BaseGui;
 import me.realized.tokenmanager.util.Placeholders;
+import me.realized.tokenmanager.util.compat.CompatUtil;
 import me.realized.tokenmanager.util.compat.Items;
 import me.realized.tokenmanager.util.inventory.InventoryUtil;
 import me.realized.tokenmanager.util.inventory.ItemUtil;
@@ -44,8 +45,9 @@ public class ShopGui extends BaseGui {
                 if (firstLoad) {
                     final SkullMeta skullMeta = (SkullMeta) item.getItemMeta();
 
-                    if (skullMeta.getOwner() != null && skullMeta.getOwner().equals("%player%")) {
-                        skullMeta.setOwner(player.getName());
+                    final String owner = CompatUtil.getSkullOwnerName(skullMeta);
+                    if (owner != null && owner.equals("%player%")) {
+                        CompatUtil.setSkullOwner(skullMeta, player, player.getName());
                         item.setItemMeta(skullMeta);
                     }
                 } else {

@@ -2,9 +2,16 @@ package me.realized.tokenmanager.util;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import me.realized.tokenmanager.util.compat.CompatUtil;
 import org.bukkit.ChatColor;
 
 public final class StringUtil {
+
+    private static final Pattern HEX_PATTERN = Pattern.compile(
+        "(?i)(?:&#|#|<#|\\{#)([0-9a-f]{6})(?:>|\\})?"
+    );
 
     private StringUtil() {}
 
@@ -21,7 +28,37 @@ public final class StringUtil {
     }
 
     public static String color(final String input) {
-        return ChatColor.translateAlternateColorCodes('&', input);
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+
+        String colored = ChatColor.translateAlternateColorCodes('&', input);
+
+        if (CompatUtil.isPre1_16()) {
+            return colored;
+        }
+
+        final Matcher matcher = HEX_PATTERN.matcher(colored);
+        final StringBuffer buffer = new StringBuffer(colored.length());
+
+        while (matcher.find()) {
+            final String hex = matcher.group(1);
+            matcher.appendReplacement(buffer, Matcher.quoteReplacement(toChatColorHex(hex)));
+        }
+
+        matcher.appendTail(buffer);
+        return buffer.toString();
+    }
+
+    private static String toChatColorHex(final String hex) {
+        final StringBuilder builder = new StringBuilder(14);
+        builder.append('§').append('x');
+
+        for (int i = 0; i < hex.length(); i++) {
+            builder.append('§').append(hex.charAt(i));
+        }
+
+        return builder.toString();
     }
 
     public static List<String> color(final List<String> input) {

@@ -1,27 +1,25 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
-buildscript {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
-    }
-}
-
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '2.0.4'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group 'me.realized'
 version '3.2.8'
 
+def spigotApiVersion = (findProperty('spigotApiVersion') ?: '1.8.8-R0.1-SNAPSHOT').toString()
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
 compileJava.options.encoding = 'UTF-8'
 
 processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     def group = project.group.toString() + "." + project.name.toLowerCase() + ".shaded"
 
     from(sourceSets.main.resources.srcDirs) {
@@ -46,11 +44,13 @@ repositories {
     maven {
         name 'mvdw-repo'
         url 'http://repo.mvdw-software.be/content/groups/public/'
+        allowInsecureProtocol = true
     }
 
     maven {
         name 'clip-repo'
         url 'http://repo.extendedclip.com/content/repositories/placeholderapi/'
+        allowInsecureProtocol = true
     }
 
     maven {
@@ -63,26 +63,68 @@ repositories {
         url 'https://repo.inventivetalent.org/content/groups/public/'
     }
 
+    maven {
+        name = "jitpack"
+        url = uri("https://jitpack.io")
+    }
+
+    // Sonatype Repository
+    maven {
+        name = "sonatype"
+        url = uri("https://oss.sonatype.org/content/groups/public/")
+    }
+
+    maven {
+        url = uri("https://maven.enginehub.org/repo/")
+    }
+
+    maven {
+        name = "minebench-repo"
+        url = uri("https://repo.minebench.de/")
+    }
+
+    maven {
+        name = "MascusJeoraly"
+        url = uri("https://raw.github.com/MascusJeoraly/LanguageUtils/mvn-repo/")
+    }
+
+    maven {
+        url = uri("https://repo.roinujnosde.me/releases/")
+    }
+
+    maven {
+        name = "essentialsxReleases"
+        url = uri("https://repo.essentialsx.net/releases")
+    }
+
+    maven {
+        url = uri("https://repo.codemc.org/repository/maven-public/")
+    }
+
     flatDir {
         dirs "$rootDir/libs/"
     }
 }
 
 dependencies {
-    compile 'org.projectlombok:lombok:1.18.22'
-    compile 'org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT'
-    compile (name: 'MVdWPlaceholderAPI-3.1.1') {
+    compileOnly 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
+
+    compileOnly "org.spigotmc:spigot-api:${spigotApiVersion}"
+    compileOnly(name: 'MVdWPlaceholderAPI-3.1.1') {
         transitive = false
     }
-    compile name: 'Vault-1.6.7'
-    compile 'me.clip:placeholderapi:2.10.9'
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+    compileOnly 'me.clip:placeholderapi:2.11.6'
 
-    // shaded dependencies
-    compile 'redis.clients:jedis:3.5.1'
-    compile 'org.apache.commons:commons-pool2:2.4.2'
-    compile 'com.zaxxer:HikariCP:4.0.2'
-    compile 'org.slf4j:slf4j-nop:1.7.32'
-    compile 'org.bstats:bstats-bukkit:1.7'
+    implementation 'redis.clients:jedis:3.9.0'
+    implementation 'org.apache.commons:commons-pool2:2.11.1'
+    implementation 'com.zaxxer:HikariCP:4.0.3'
+    implementation 'org.slf4j:slf4j-nop:1.7.36'
+    implementation 'org.bstats:bstats-bukkit:3.1.0'
+    compileOnly("com.github.hongminh54:Storage:2.3.5-SNAPSHOT")
+    compileOnly("net.luckperms:api:5.5")
+    implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.1-SNAPSHOT")
 }
 
 clean.doFirst {
@@ -91,10 +133,9 @@ clean.doFirst {
 
 shadowJar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    destinationDir = file("$rootDir/out/")
-    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
-    baseName = 'TokenManager'
-    classifier = null
+    destinationDirectory = file("$rootDir/out/")
+    archiveBaseName = 'TokenManager'
+    archiveClassifier = ''
 
     dependencies {
         include(dependency('redis.clients:.*'))

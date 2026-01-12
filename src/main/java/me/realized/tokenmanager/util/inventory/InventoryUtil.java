@@ -15,7 +15,8 @@ public final class InventoryUtil {
         final Inventory result = Bukkit.createInventory(null, inventory.getSize(), StringUtil.color(title));
 
         for (int i = 0; i < inventory.getSize(); i++) {
-            result.setItem(i, inventory.getItem(i).clone());
+            final ItemStack item = inventory.getItem(i);
+            result.setItem(i, item != null ? item.clone() : null);
         }
 
         return result;
