@@ -1,44 +1,24 @@
 package me.realized.tokenmanager.command.commands.subcommands;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalLong;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.command.BaseCommand;
 import me.realized.tokenmanager.util.NumberUtil;
 import me.realized.tokenmanager.util.profile.ProfileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalLong;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+
 public class OfflineCommand extends BaseCommand {
-
-    public enum ModifyType {
-
-        ADD("COMMAND.tokenmanager.add", (balance, amount) -> balance + amount),
-        SET("COMMAND.tokenmanager.set", (balance, amount) -> amount),
-        REMOVE("COMMAND.tokenmanager.remove", (balance, amount) -> balance - amount);
-
-        private final String messageKey;
-        private final BiFunction<Long, Long, Long> action;
-
-        ModifyType(final String messageKey, final BiFunction<Long, Long, Long> action) {
-            this.messageKey = messageKey;
-            this.action = action;
-        }
-
-        public String getMessageKey() {
-            return messageKey;
-        }
-
-        public long apply(final long balance, final long amount) {
-            return action.apply(balance, amount);
-        }
-    }
 
     private final ModifyType type;
 
@@ -104,8 +84,8 @@ public class OfflineCommand extends BaseCommand {
                 }
 
                 dataManager.set(key.get(), type, amount, type.apply(balance.getAsLong(), amount), silent,
-                    () -> sendMessage(sender, true, type.getMessageKey(), "amount", amount, "player", args[1]),
-                    error -> sendMessage(sender, false, "&cThere was an error while executing this command, please contact an administrator."));
+                        () -> sendMessage(sender, true, type.getMessageKey(), "amount", amount, "player", args[1]),
+                        error -> sendMessage(sender, false, "&cThere was an error while executing this command, please contact an administrator."));
             }, error -> sender.sendMessage(ChatColor.RED + "Could not get token balance of " + key.get() + ": " + error));
         });
     }
@@ -118,6 +98,73 @@ public class OfflineCommand extends BaseCommand {
         }
 
         plugin.doAsync(() -> ProfileUtil.getUUID(input, uuid -> consumer.accept(Optional.ofNullable(uuid)),
-            error -> sender.sendMessage(ChatColor.RED + "Failed to obtain UUID of " + input + ": " + error)));
+                error -> sender.sendMessage(ChatColor.RED + "Failed to obtain UUID of " + input + ": " + error)));
+    }
+
+    @Override
+    public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+        if (args.length == 2) {
+            return tabCompleteOnlinePlayers(args[1]);
+        }
+
+        if (args.length == 3) {
+            final String prefix = args[2] != null ? args[2].toLowerCase() : "";
+
+            final List<String> result = new ArrayList<>();
+
+            for (final String amount : TAB_AMOUNTS) {
+                if (prefix.isEmpty() || amount.startsWith(prefix)) {
+                    result.add(amount);
+                }
+            }
+
+            return result;
+        }
+
+        if (args.length >= 4) {
+            final String prefix = args[args.length - 1] != null ? args[args.length - 1].toLowerCase() : "";
+            final List<String> used = Arrays.asList(args);
+
+            final List<String> result = new ArrayList<>();
+
+            for (final String flag : Arrays.asList("-s", "-o")) {
+                if (used.contains(flag)) {
+                    continue;
+                }
+
+                if (!prefix.isEmpty() && !flag.startsWith(prefix)) {
+                    continue;
+                }
+
+                result.add(flag);
+            }
+
+            return result;
+        }
+
+        return null;
+    }
+
+    public enum ModifyType {
+
+        ADD("COMMAND.tokenmanager.add", (balance, amount) -> balance + amount),
+        SET("COMMAND.tokenmanager.set", (balance, amount) -> amount),
+        REMOVE("COMMAND.tokenmanager.remove", (balance, amount) -> balance - amount);
+
+        private final String messageKey;
+        private final BiFunction<Long, Long, Long> action;
+
+        ModifyType(final String messageKey, final BiFunction<Long, Long, Long> action) {
+            this.messageKey = messageKey;
+            this.action = action;
+        }
+
+        public String getMessageKey() {
+            return messageKey;
+        }
+
+        public long apply(final long balance, final long amount) {
+            return action.apply(balance, amount);
+        }
     }
 }

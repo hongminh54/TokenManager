@@ -1,9 +1,6 @@
 package me.realized.tokenmanager.util.compat;
 
 import me.realized.tokenmanager.util.NumberUtil;
-import java.lang.reflect.Method;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
@@ -11,6 +8,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+
+import java.lang.reflect.Method;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class CompatUtil {
 
@@ -40,22 +41,25 @@ public final class CompatUtil {
 
         ENCHANTMENT_GET_KEY = ReflectionUtil.getMethodUnsafe(Enchantment.class, "getKey");
         NAMESPACEDKEY_GET_KEY = ReflectionUtil.getMethodUnsafe(
-            ReflectionUtil.getClassUnsafe("org.bukkit.NamespacedKey"),
-            "getKey"
+                ReflectionUtil.getClassUnsafe("org.bukkit.NamespacedKey"),
+                "getKey"
         );
         ITEMMETA_SET_UNBREAKABLE = ReflectionUtil.getMethodUnsafe(ItemMeta.class, "setUnbreakable", boolean.class);
 
         ITEMMETA_SPIGOT = ReflectionUtil.getMethodUnsafe(ItemMeta.class, "spigot");
         ITEMMETA_SPIGOT_SET_UNBREAKABLE = ITEMMETA_SPIGOT != null
-            ? ReflectionUtil.getMethodUnsafe(ITEMMETA_SPIGOT.getReturnType(), "setUnbreakable", boolean.class)
-            : null;
+                ? ReflectionUtil.getMethodUnsafe(ITEMMETA_SPIGOT.getReturnType(), "setUnbreakable", boolean.class)
+                : null;
 
         ITEMMETA_SET_CUSTOM_MODEL_DATA = ReflectionUtil.getMethodUnsafe(ItemMeta.class, "setCustomModelData", Integer.class);
         POTIONMETA_SET_BASE_POTION_DATA = ReflectionUtil.getMethodUnsafe(
-            PotionMeta.class,
-            "setBasePotionData",
-            ReflectionUtil.getClassUnsafe("org.bukkit.potion.PotionData")
+                PotionMeta.class,
+                "setBasePotionData",
+                ReflectionUtil.getClassUnsafe("org.bukkit.potion.PotionData")
         );
+    }
+
+    private CompatUtil() {
     }
 
     private static long detectSubVersion() {
@@ -88,8 +92,6 @@ public final class CompatUtil {
 
         return 0;
     }
-
-    private CompatUtil() {}
 
     public static boolean isPre1_17() {
         return SUB_VERSION < 17;
@@ -170,7 +172,6 @@ public final class CompatUtil {
             setDamage.invoke(meta, durability);
             item.setItemMeta(meta);
         } catch (Exception ignored) {
-            return;
         }
     }
 
@@ -271,10 +272,10 @@ public final class CompatUtil {
     }
 
     public static boolean setBasePotionData(
-        final PotionMeta meta,
-        final String potionTypeName,
-        final boolean extended,
-        final boolean upgraded
+            final PotionMeta meta,
+            final String potionTypeName,
+            final boolean extended,
+            final boolean upgraded
     ) {
         if (meta == null || POTIONMETA_SET_BASE_POTION_DATA == null) {
             return false;
@@ -285,8 +286,8 @@ public final class CompatUtil {
             final Object potionType = Enum.valueOf((Class<? extends Enum>) potionTypeClass, potionTypeName);
             final Class<?> potionDataClass = Class.forName("org.bukkit.potion.PotionData");
             final Object potionData = potionDataClass
-                .getConstructor(potionTypeClass, boolean.class, boolean.class)
-                .newInstance(potionType, extended, upgraded);
+                    .getConstructor(potionTypeClass, boolean.class, boolean.class)
+                    .newInstance(potionType, extended, upgraded);
             POTIONMETA_SET_BASE_POTION_DATA.invoke(meta, potionData);
             return true;
         } catch (Exception ignored) {

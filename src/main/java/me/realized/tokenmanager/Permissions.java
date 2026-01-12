@@ -19,5 +19,6 @@ public final class Permissions {
     public static final String SHOP_SLOT_OLD = PREFIX + "use.";
     public static final String SHOP_SLOT_CANCEL = PREFIX + "cancel.";
 
-    private Permissions() {}
+    private Permissions() {
+    }
 }

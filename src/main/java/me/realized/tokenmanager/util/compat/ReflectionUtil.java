@@ -1,10 +1,11 @@
 package me.realized.tokenmanager.util.compat;
 
+import me.realized.tokenmanager.util.NumberUtil;
+import org.bukkit.Bukkit;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import me.realized.tokenmanager.util.NumberUtil;
-import org.bukkit.Bukkit;
 
 public final class ReflectionUtil {
     private static final String PACKAGE_VERSION;
@@ -29,6 +30,9 @@ public final class ReflectionUtil {
         }
     }
 
+    private ReflectionUtil() {
+    }
+
     private static int detectMajorFromBukkitVersion() {
         try {
             final String bukkitVersion = Bukkit.getBukkitVersion();
@@ -40,7 +44,7 @@ public final class ReflectionUtil {
             final int start = idx + 2;
             int end = start;
             while (end < bukkitVersion.length()
-                && Character.isDigit(bukkitVersion.charAt(end))) {
+                    && Character.isDigit(bukkitVersion.charAt(end))) {
                 end++;
             }
 
@@ -49,7 +53,7 @@ public final class ReflectionUtil {
             }
 
             return (int) NumberUtil.parseLong(bukkitVersion.substring(start, end))
-                .orElse(0);
+                    .orElse(0);
         } catch (Exception ex) {
             return 0;
         }
@@ -83,7 +87,7 @@ public final class ReflectionUtil {
         try {
             if (getMajorVersion() < 17 && !PACKAGE_VERSION.isEmpty()) {
                 return Class.forName(
-                    "net.minecraft.server." + PACKAGE_VERSION + "." + name
+                        "net.minecraft.server." + PACKAGE_VERSION + "." + name
                 );
             }
 
@@ -127,6 +131,7 @@ public final class ReflectionUtil {
             return null;
         }
     }
+
     public static Method getMethod(final Class<?> clazz, final String name, final Class<?>... parameters) {
         try {
             return clazz.getMethod(name, parameters);
@@ -187,6 +192,4 @@ public final class ReflectionUtil {
             return null;
         }
     }
-
-    private ReflectionUtil() {}
 }

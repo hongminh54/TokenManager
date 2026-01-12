@@ -1,14 +1,15 @@
 package me.realized.tokenmanager.command.commands.subcommands;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.command.BaseCommand;
 import me.realized.tokenmanager.util.Loadable;
 import me.realized.tokenmanager.util.Reloadable;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class ReloadCommand extends BaseCommand {
 
@@ -48,9 +49,16 @@ public class ReloadCommand extends BaseCommand {
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String alias, final String[] args) {
         if (args.length == 2) {
-            return plugin.getReloadables().stream()
-                .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
-                .collect(Collectors.toList());
+            final String prefix = args[1] != null ? args[1].toLowerCase() : "";
+            final List<String> result = new ArrayList<>();
+
+            for (final String name : plugin.getReloadables()) {
+                if (prefix.isEmpty() || name.toLowerCase().startsWith(prefix)) {
+                    result.add(name);
+                }
+            }
+
+            return result;
         }
 
         return null;

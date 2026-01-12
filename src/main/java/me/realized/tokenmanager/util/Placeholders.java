@@ -1,10 +1,14 @@
 package me.realized.tokenmanager.util;
 
-import java.util.List;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
+
 public final class Placeholders {
+
+    private Placeholders() {
+    }
 
     public static void replace(final ItemStack item, final Object value, final String... placeholders) {
         if (!item.hasItemMeta()) {
@@ -32,7 +36,7 @@ public final class Placeholders {
 
             for (final String placeholder : placeholders) {
                 displayName =
-                    value instanceof Number ? replace(displayName, (Number) value, placeholder) : displayName.replace("%" + placeholder + "%", String.valueOf(value));
+                        value instanceof Number ? replace(displayName, (Number) value, placeholder) : displayName.replace("%" + placeholder + "%", String.valueOf(value));
             }
 
             meta.setDisplayName(displayName);
@@ -44,13 +48,11 @@ public final class Placeholders {
     public static String replace(String line, final Number value, final String... placeholders) {
         for (final String key : placeholders) {
             line = line
-                .replace("%" + key + "%", String.valueOf(value))
-                .replace("%" + key + "_raw%", String.valueOf(value))
-                .replace("%" + key + "_commas%", NumberUtil.withCommas(value.longValue()))
-                .replace("%" + key + "_formatted%", NumberUtil.withSuffix(value.longValue()));
+                    .replace("%" + key + "%", String.valueOf(value))
+                    .replace("%" + key + "_raw%", String.valueOf(value))
+                    .replace("%" + key + "_commas%", NumberUtil.withCommas(value.longValue()))
+                    .replace("%" + key + "_formatted%", NumberUtil.withSuffix(value.longValue()));
         }
         return line;
     }
-
-    private Placeholders() {}
 }

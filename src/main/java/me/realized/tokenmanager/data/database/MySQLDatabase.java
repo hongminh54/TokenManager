@@ -2,27 +2,6 @@ package me.realized.tokenmanager.data.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import java.io.File;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.OptionalLong;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import lombok.Getter;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.command.commands.subcommands.OfflineCommand.ModifyType;
@@ -43,6 +22,15 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisConnectionException;
+
+import java.io.File;
+import java.sql.*;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class MySQLDatabase extends AbstractDatabase {
 
@@ -70,9 +58,9 @@ public class MySQLDatabase extends AbstractDatabase {
         final Config config = plugin.getConfiguration();
         final HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(config.getMysqlUrl()
-            .replace("%hostname%", config.getMysqlHostname())
-            .replace("%port%", config.getMysqlPort())
-            .replace("%database%", config.getMysqlDatabase())
+                .replace("%hostname%", config.getMysqlHostname())
+                .replace("%port%", config.getMysqlPort())
+                .replace("%database%", config.getMysqlDatabase())
         );
         hikariConfig.setDriverClassName("com.mysql." + (CompatUtil.isPre1_17() ? "" : "cj.") + "jdbc.Driver");
         hikariConfig.setUsername(config.getMysqlUsername());
@@ -103,8 +91,8 @@ public class MySQLDatabase extends AbstractDatabase {
         }
 
         try (
-            Connection connection = dataSource.getConnection();
-            Statement statement = connection.createStatement()
+                Connection connection = dataSource.getConnection();
+                Statement statement = connection.createStatement()
         ) {
             statement.execute(Query.CREATE_TABLE.query);
 
@@ -295,8 +283,8 @@ public class MySQLDatabase extends AbstractDatabase {
             sender.sendMessage(ChatColor.BLUE + plugin.getDescription().getFullName() + ": Load Complete. Starting the transfer...");
 
             try (
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(Query.INSERT_OR_UPDATE.query)
+                    Connection connection = dataSource.getConnection();
+                    PreparedStatement statement = connection.prepareStatement(Query.INSERT_OR_UPDATE.query)
             ) {
                 connection.setAutoCommit(false);
                 int i = 0;
@@ -422,7 +410,8 @@ public class MySQLDatabase extends AbstractDatabase {
     private void publish(final String message) {
         try (Jedis jedis = jedisPool.getResource()) {
             jedis.publish("tokenmanager", message);
-        } catch (JedisConnectionException ignored) {}
+        } catch (JedisConnectionException ignored) {
+        }
     }
 
     private enum Query {

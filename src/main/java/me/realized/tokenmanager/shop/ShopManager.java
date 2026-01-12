@@ -1,9 +1,5 @@
 package me.realized.tokenmanager.shop;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.config.Config;
 import me.realized.tokenmanager.config.Lang;
@@ -18,6 +14,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 public class ShopManager implements Loadable, Listener {
 
@@ -36,7 +37,8 @@ public class ShopManager implements Loadable, Listener {
     }
 
     @Override
-    public void handleLoad() {}
+    public void handleLoad() {
+    }
 
     @Override
     public void handleUnload() {

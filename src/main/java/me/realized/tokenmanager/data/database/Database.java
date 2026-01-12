@@ -1,12 +1,13 @@
 package me.realized.tokenmanager.data.database;
 
+import me.realized.tokenmanager.command.commands.subcommands.OfflineCommand.ModifyType;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import java.util.List;
 import java.util.OptionalLong;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import me.realized.tokenmanager.command.commands.subcommands.OfflineCommand.ModifyType;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public interface Database {
 
@@ -44,7 +45,7 @@ public interface Database {
     /**
      * Returns top balances. Must be called synchronously!
      *
-     * @param limit amount of the rows to be returned
+     * @param limit  amount of the rows to be returned
      * @param onLoad Consumer to call once data is retrieved
      */
     void ordered(final int limit, final Consumer<List<TopElement>> onLoad);

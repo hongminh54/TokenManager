@@ -1,7 +1,5 @@
 package me.realized.tokenmanager.shop;
 
-import java.util.HashMap;
-import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.realized.tokenmanager.util.Placeholders;
@@ -9,6 +7,9 @@ import me.realized.tokenmanager.util.StringUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Shop {
 
@@ -27,7 +28,7 @@ public class Shop {
     private Map<Integer, Slot> slots;
 
     public Shop(final String name, final String title, final int rows, final boolean autoClose, final boolean usePermission, final boolean confirmPurchase)
-        throws IllegalArgumentException {
+            throws IllegalArgumentException {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Name is null or empty.");
         }

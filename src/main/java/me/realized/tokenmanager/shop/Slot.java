@@ -1,8 +1,5 @@
 package me.realized.tokenmanager.shop;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalLong;
 import lombok.Getter;
 import me.realized.tokenmanager.Permissions;
 import me.realized.tokenmanager.TokenManagerPlugin;
@@ -15,6 +12,10 @@ import me.realized.tokenmanager.util.inventory.InventoryUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalLong;
 
 public class Slot {
 
@@ -46,7 +47,7 @@ public class Slot {
     private final boolean confirmPurchase;
 
     public Slot(final TokenManagerPlugin plugin, final Shop shop, final int slot, final int cost, final int emptySlotsRequired, final ItemStack displayed, final String message, final String subshop,
-        final List<String> commands, final boolean usePermission, final boolean confirmPurchase) {
+                final List<String> commands, final boolean usePermission, final boolean confirmPurchase) {
         this.plugin = plugin;
         this.config = plugin.getConfiguration();
         this.shop = shop;

@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'me.realized'
-version '3.2.8'
+version '3.2.9-SNAPSHOT'
 
 def spigotApiVersion = (findProperty('spigotApiVersion') ?: '1.8.8-R0.1-SNAPSHOT').toString()
 
@@ -25,9 +25,18 @@ processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     def group = project.group.toString() + "." + project.name.toLowerCase() + ".shaded"
 
-    from(sourceSets.main.resources.srcDirs) {
-        include '**/*.yml'
-        filter(ReplaceTokens, tokens: [NAME: project.name, VERSION: project.version, SHADED_GROUP: group])
+    filesMatching('**/*.yml') {
+        filter(
+                ReplaceTokens,
+                beginToken: '\${',
+                endToken: '}',
+                tokens: [
+                        project_version: project.version.toString(),
+                        NAME           : project.name,
+                        VERSION        : project.version.toString(),
+                        SHADED_GROUP   : group,
+                ],
+        )
     }
 }
 
@@ -148,10 +157,11 @@ shadowJar {
         include(dependency('org.slf4j:.*'))
         include(dependency('org.bstats:.*'))
         include(dependency('com.github.cryptomorin:.*'))
+        include(dependency('org.codemc.worldguardwrapper:.*'))
 
     }
 
-    def group = project.group.toString() + "." + project.name.toLowerCase() + ".libs."
+    def group = project.group.toString() + "." + project.name.toLowerCase() + ".shaded."
 
     relocate 'redis.clients', group + 'redis.clients'
     relocate 'org.apache.commons.pool2', group + 'apache.commons.pool2'
@@ -159,6 +169,7 @@ shadowJar {
     relocate 'org.slf4j', group + "slf4j"
     relocate 'org.bstats', group + 'bstats'
     relocate 'com.github.cryptomorin', group + "xseries"
+    relocate 'org.codemc.worldguardwrapper', group + "worldguardwrapper"
 }
 
 build.dependsOn(shadowJar)

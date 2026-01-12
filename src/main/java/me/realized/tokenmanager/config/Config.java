@@ -1,12 +1,13 @@
 package me.realized.tokenmanager.config;
 
-import java.util.HashMap;
-import java.util.Map;
 import lombok.Getter;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.util.config.AbstractConfiguration;
 import me.realized.tokenmanager.util.config.convert.Converter;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Config extends AbstractConfiguration<TokenManagerPlugin> {
 
@@ -114,7 +115,8 @@ public class Config extends AbstractConfiguration<TokenManagerPlugin> {
 
     private class Converter2_3 implements Converter {
 
-        Converter2_3() {}
+        Converter2_3() {
+        }
 
         @Override
         public Map<String, String> renamedKeys() {

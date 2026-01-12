@@ -1,8 +1,5 @@
 package me.realized.tokenmanager.command.commands.subcommands;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import me.realized.tokenmanager.Permissions;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.command.BaseCommand;
@@ -11,6 +8,10 @@ import me.realized.tokenmanager.shop.gui.guis.ShopGui;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class ShopCommand extends BaseCommand {
 
@@ -56,9 +57,25 @@ public class ShopCommand extends BaseCommand {
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String alias, final String[] args) {
         if (args.length == 2 && !config.isOpenSelectedEnabled()) {
-            return shopConfig.getShops().stream().map(Shop::getName)
-                .filter(name -> name.toLowerCase().startsWith(args[1].toLowerCase()))
-                .collect(Collectors.toList());
+            final String prefix = args[1] != null ? args[1].toLowerCase() : "";
+            final Player player = sender instanceof Player ? (Player) sender : null;
+            final List<String> result = new ArrayList<>();
+
+            for (final Shop shop : shopConfig.getShops()) {
+                final String name = shop.getName();
+
+                if (!prefix.isEmpty() && !name.toLowerCase().startsWith(prefix)) {
+                    continue;
+                }
+
+                if (player != null && shop.isUsePermission() && !player.hasPermission(Permissions.SHOP + name)) {
+                    continue;
+                }
+
+                result.add(name);
+            }
+
+            return result;
         }
 
         return null;

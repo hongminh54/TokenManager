@@ -1,12 +1,15 @@
 package me.realized.tokenmanager.command.commands.subcommands;
 
-import java.util.OptionalLong;
 import me.realized.tokenmanager.Permissions;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.command.BaseCommand;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
+import java.util.OptionalLong;
 
 public class BalanceCommand extends BaseCommand {
 
@@ -50,5 +53,14 @@ public class BalanceCommand extends BaseCommand {
         }
 
         sendMessage(sender, true, "COMMAND.token.balance-other", "player", target.getName(), "tokens", balance.getAsLong());
+    }
+
+    @Override
+    public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+        if (args.length == 2 && sender.hasPermission(Permissions.CMD_BALANCE_OTHERS)) {
+            return tabCompleteOnlinePlayers(args[1]);
+        }
+
+        return null;
     }
 }

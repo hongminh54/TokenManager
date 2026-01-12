@@ -14,16 +14,16 @@ public class TMTokenSendEvent extends TMEvent {
         this.target = target;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public Player getTarget() {
         return target;
     }
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

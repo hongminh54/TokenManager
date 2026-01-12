@@ -2,12 +2,6 @@ package me.realized.tokenmanager.data;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.OptionalLong;
-import java.util.UUID;
-import java.util.function.Consumer;
 import lombok.Getter;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.command.commands.subcommands.OfflineCommand.ModifyType;
@@ -27,18 +21,18 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 
+import java.util.*;
+import java.util.function.Consumer;
+
 public class DataManager implements Loadable, Listener {
 
     private final TokenManagerPlugin plugin;
-
+    private final Multimap<UUID, QueuedCommand> queuedCommands = LinkedHashMultimap.create();
     private Database database;
-
     @Getter
     private List<TopElement> topCache = new ArrayList<>();
     private Integer topTask, updateInterval;
     private long lastUpdateMillis;
-
-    private final Multimap<UUID, QueuedCommand> queuedCommands = LinkedHashMultimap.create();
 
     public DataManager(final TokenManagerPlugin plugin) {
         this.plugin = plugin;
@@ -95,7 +89,7 @@ public class DataManager implements Loadable, Listener {
     }
 
     public void set(final String key, final ModifyType type, final long amount, final long balance, final boolean silent, final Runnable onDone,
-        final Consumer<String> onError) {
+                    final Consumer<String> onError) {
         if (database != null) {
             database.set(key, type, amount, balance, silent, onDone, onError);
         }

@@ -1,22 +1,11 @@
 package me.realized.tokenmanager.util.inventory;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.google.common.collect.Lists;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.OptionalLong;
-import java.util.function.Consumer;
 import me.realized.tokenmanager.util.EnumUtil;
 import me.realized.tokenmanager.util.NumberUtil;
 import me.realized.tokenmanager.util.StringUtil;
-import me.realized.tokenmanager.util.compat.CompatUtil;
-import me.realized.tokenmanager.util.compat.Items;
-import me.realized.tokenmanager.util.compat.Skulls;
-import me.realized.tokenmanager.util.compat.SpawnEggs;
-import me.realized.tokenmanager.util.compat.Terracottas;
-import com.cryptomorin.xseries.XMaterial;
+import me.realized.tokenmanager.util.compat.*;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -30,6 +19,9 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+
+import java.util.*;
+import java.util.function.Consumer;
 
 public final class ItemUtil {
 
@@ -107,6 +99,9 @@ public final class ItemUtil {
         EFFECTS = Collections.unmodifiableMap(effects);
     }
 
+    private ItemUtil() {
+    }
+
     public static ItemStack loadFromString(final String line) {
         if (line == null || line.isEmpty()) {
             throw new IllegalArgumentException("Line is empty or null");
@@ -149,8 +144,8 @@ public final class ItemUtil {
 
         if (material == null) {
             material = XMaterial.matchXMaterial(materialName)
-                .map(XMaterial::parseMaterial)
-                .orElse(null);
+                    .map(XMaterial::parseMaterial)
+                    .orElse(null);
         }
 
         // TEMP: Allow confirm button item loading in 1.13
@@ -225,7 +220,6 @@ public final class ItemUtil {
         return result;
     }
 
-
     public static ItemStack loadFromString(final String line, final Consumer<String> errorHandler) {
         ItemStack result;
 
@@ -233,16 +227,16 @@ public final class ItemUtil {
             result = loadFromString(line);
         } catch (Exception ex) {
             result = ItemBuilder
-                .of(Material.REDSTONE_BLOCK)
-                .name("&4&m------------------")
-                .lore(
-                    "&cThere was an error",
-                    "&cwhile loading this",
-                    "&citem, please contact",
-                    "&can administrator.",
-                    "&4&m------------------"
-                )
-                .build();
+                    .of(Material.REDSTONE_BLOCK)
+                    .name("&4&m------------------")
+                    .lore(
+                            "&cThere was an error",
+                            "&cwhile loading this",
+                            "&citem, please contact",
+                            "&can administrator.",
+                            "&4&m------------------"
+                    )
+                    .build();
             errorHandler.accept(ex.getMessage());
         }
 
@@ -346,6 +340,4 @@ public final class ItemUtil {
 
         to.setItemMeta(toMeta);
     }
-
-    private ItemUtil() {}
 }

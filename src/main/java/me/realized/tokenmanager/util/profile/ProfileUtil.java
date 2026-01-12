@@ -1,16 +1,20 @@
 package me.realized.tokenmanager.util.profile;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 public final class ProfileUtil {
 
     private static final Pattern UUID_PATTERN = Pattern.compile("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}");
+
+    private ProfileUtil() {
+    }
 
     public static boolean isOnlineMode() {
         if (Bukkit.getOnlineMode()) {
@@ -47,6 +51,4 @@ public final class ProfileUtil {
             errorHandler.accept(ex.getMessage());
         }
     }
-
-    private ProfileUtil() {}
 }

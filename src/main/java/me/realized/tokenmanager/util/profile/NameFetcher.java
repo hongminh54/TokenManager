@@ -4,21 +4,18 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 public final class NameFetcher {
 
@@ -27,12 +24,13 @@ public final class NameFetcher {
     private static final String MINETOOLS_URL = "https://api.minetools.eu/uuid/";
     private static final JsonParser JSON_PARSER = new JsonParser();
     private static final Cache<UUID, String> UUID_TO_NAME = CacheBuilder.newBuilder()
-        .concurrencyLevel(4)
-        .maximumSize(1000)
-        .expireAfterWrite(30, TimeUnit.MINUTES)
-        .build();
+            .concurrencyLevel(4)
+            .maximumSize(1000)
+            .expireAfterWrite(30, TimeUnit.MINUTES)
+            .build();
 
-    private NameFetcher() {}
+    private NameFetcher() {
+    }
 
     static void getNames(final List<UUID> uuids, final Consumer<Map<UUID, String>> consumer) {
         EXECUTOR_SERVICE.schedule(new NameCollectorTask(uuids, consumer), 0L, TimeUnit.MILLISECONDS);
@@ -56,14 +54,15 @@ public final class NameFetcher {
                 }
 
                 final JsonObject response = (JsonObject) JSON_PARSER.parse(new InputStreamReader(stream));
-                final  String name = response.get("name").getAsString();
+                final String name = response.get("name").getAsString();
 
                 if (name != null) {
                     UUID_TO_NAME.put(uuid, name);
                     return name;
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return null;
     }
 

@@ -1,15 +1,17 @@
 package me.realized.tokenmanager.util;
 
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Level;
 
 public final class Log {
 
     private static JavaPlugin source;
 
-    private Log() {}
+    private Log() {
+    }
 
     public static void setSource(final JavaPlugin plugin) {
         source = plugin;

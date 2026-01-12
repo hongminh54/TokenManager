@@ -1,10 +1,11 @@
 package me.realized.tm.api;
 
-import java.util.UUID;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.api.TokenManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 /**
  *

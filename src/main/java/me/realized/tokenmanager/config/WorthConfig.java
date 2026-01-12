@@ -1,8 +1,5 @@
 package me.realized.tokenmanager.config;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.OptionalLong;
 import com.cryptomorin.xseries.XMaterial;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.util.Reloadable;
@@ -12,6 +9,10 @@ import org.bukkit.Material;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.OptionalLong;
 
 public class WorthConfig extends AbstractConfiguration<TokenManagerPlugin> implements Reloadable {
 
@@ -28,8 +29,8 @@ public class WorthConfig extends AbstractConfiguration<TokenManagerPlugin> imple
 
             if (type == null) {
                 type = XMaterial.matchXMaterial(key)
-                    .map(XMaterial::parseMaterial)
-                    .orElse(null);
+                        .map(XMaterial::parseMaterial)
+                        .orElse(null);
             }
 
             if (type == null) {
@@ -39,7 +40,7 @@ public class WorthConfig extends AbstractConfiguration<TokenManagerPlugin> imple
             final Object value = configuration.get(key);
 
             if (value instanceof Number) {
-                worth.put(type, new WorthData((long) ((int) value)));
+                worth.put(type, new WorthData((int) value));
                 return;
             } else if (!(value instanceof MemorySection)) {
                 return;

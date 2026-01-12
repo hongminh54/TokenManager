@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -25,12 +26,13 @@ final class UUIDFetcher {
     private static final JsonParser JSON_PARSER = new JsonParser();
     private static final Gson GSON = new Gson();
     private static final Cache<String, UUID> NAME_TO_UUID = CacheBuilder.newBuilder()
-        .concurrencyLevel(4)
-        .maximumSize(1000)
-        .expireAfterWrite(30, TimeUnit.MINUTES)
-        .build();
+            .concurrencyLevel(4)
+            .maximumSize(1000)
+            .expireAfterWrite(30, TimeUnit.MINUTES)
+            .build();
 
-    private UUIDFetcher() {}
+    private UUIDFetcher() {
+    }
 
     static String getUUID(final String name) throws Exception {
         final UUID cached = NAME_TO_UUID.getIfPresent(name);
@@ -72,6 +74,6 @@ final class UUIDFetcher {
 
     private static UUID get(String id) {
         return UUID.fromString(
-            id.substring(0, 8) + "-" + id.substring(8, 12) + "-" + id.substring(12, 16) + "-" + id.substring(16, 20) + "-" + id.substring(20, 32));
+                id.substring(0, 8) + "-" + id.substring(8, 12) + "-" + id.substring(12, 16) + "-" + id.substring(16, 20) + "-" + id.substring(20, 32));
     }
 }

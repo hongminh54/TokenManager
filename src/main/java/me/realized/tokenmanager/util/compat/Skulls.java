@@ -1,10 +1,14 @@
 package me.realized.tokenmanager.util.compat;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.UUID;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.UUID;
+
 public final class Skulls extends CompatBase {
+
+    private Skulls() {
+    }
 
     public static void setSkull(final SkullMeta meta, final String value) {
         try {
@@ -21,6 +25,4 @@ public final class Skulls extends CompatBase {
             ex.printStackTrace();
         }
     }
-
-    private Skulls() {}
 }

@@ -1,11 +1,5 @@
 package me.realized.tokenmanager;
 
-import com.google.common.collect.Lists;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalLong;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import me.realized.tokenmanager.api.TokenManager;
 import me.realized.tokenmanager.command.commands.TMCommand;
@@ -20,12 +14,7 @@ import me.realized.tokenmanager.hook.HookManager;
 import me.realized.tokenmanager.shop.Shop;
 import me.realized.tokenmanager.shop.ShopConfig;
 import me.realized.tokenmanager.shop.ShopManager;
-import me.realized.tokenmanager.util.Loadable;
-import me.realized.tokenmanager.util.Log;
-import me.realized.tokenmanager.util.NumberUtil;
-import me.realized.tokenmanager.util.Reloadable;
-import me.realized.tokenmanager.util.StringUtil;
-import me.realized.tokenmanager.util.UpdateChecker;
+import me.realized.tokenmanager.util.*;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -35,6 +24,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalLong;
+import java.util.stream.Collectors;
 
 public class TokenManagerPlugin extends JavaPlugin implements TokenManager, Listener {
 
@@ -127,7 +122,7 @@ public class TokenManagerPlugin extends JavaPlugin implements TokenManager, List
                 Log.info("Loaded " + loadable.getClass().getSimpleName() + ".");
             } catch (Exception ex) {
                 Log.error("There was an error while loading " + loadable.getClass().getSimpleName()
-                    + "! If you believe this is an issue from the plugin, please contact the developer.");
+                        + "! If you believe this is an issue from the plugin, please contact the developer.");
                 Log.error("Cause of error: " + ex.getMessage());
                 ex.printStackTrace();
                 return false;
@@ -149,7 +144,7 @@ public class TokenManagerPlugin extends JavaPlugin implements TokenManager, List
                 Log.info("Unloaded " + loadable.getClass().getSimpleName() + ".");
             } catch (Exception ex) {
                 Log.error("There was an error while unloading " + loadable.getClass().getSimpleName()
-                    + "! If you believe this is an issue from the plugin, please contact the developer.");
+                        + "! If you believe this is an issue from the plugin, please contact the developer.");
                 Log.error("Cause of error: " + ex.getMessage());
                 ex.printStackTrace();
                 return false;
@@ -290,7 +285,7 @@ public class TokenManagerPlugin extends JavaPlugin implements TokenManager, List
             return true;
         } catch (Exception ex) {
             Log.error("There was an error while " + (unloaded ? "loading " : "unloading ") + name
-                + "! If you believe this is an issue from the plugin, please contact the developer.");
+                    + "! If you believe this is an issue from the plugin, please contact the developer.");
             Log.error("Cause of error: " + ex.getMessage());
             ex.printStackTrace();
             return false;
@@ -303,9 +298,9 @@ public class TokenManagerPlugin extends JavaPlugin implements TokenManager, List
 
     public List<String> getReloadables() {
         return loadables.stream()
-            .filter(loadable -> loadable instanceof Reloadable)
-            .map(loadable -> loadable.getClass().getSimpleName())
-            .collect(Collectors.toList());
+                .filter(loadable -> loadable instanceof Reloadable)
+                .map(loadable -> loadable.getClass().getSimpleName())
+                .collect(Collectors.toList());
     }
 
     public String handlePlaceholderRequest(final Player player, final String identifier) {

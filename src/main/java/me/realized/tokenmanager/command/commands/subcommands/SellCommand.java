@@ -1,16 +1,20 @@
 package me.realized.tokenmanager.command.commands.subcommands;
 
-import java.util.OptionalLong;
 import me.realized.tokenmanager.Permissions;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.api.event.TMSellAllEvent;
 import me.realized.tokenmanager.api.event.TMSellHandEvent;
 import me.realized.tokenmanager.command.BaseCommand;
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.OptionalLong;
 
 public class SellCommand extends BaseCommand {
 
@@ -101,5 +105,18 @@ public class SellCommand extends BaseCommand {
 
         final String name = WordUtils.capitalizeFully(item.getType().toString().replace("_", " ").toLowerCase());
         sendMessage(sender, true, "COMMAND.token.sell", "item_type", name, "item_amount", item.getAmount(), "amount", price);
+    }
+
+    @Override
+    public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+        if (args.length == 2 && sender instanceof Player) {
+            final String prefix = args[1] != null ? args[1].toLowerCase() : "";
+
+            if ("all".startsWith(prefix) && sender.hasPermission(Permissions.CMD_SELL_ALL)) {
+                return Collections.singletonList("all");
+            }
+        }
+
+        return null;
     }
 }

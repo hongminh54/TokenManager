@@ -15,16 +15,16 @@ public class TMSellHandEvent extends TMEvent {
         this.item = item;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public ItemStack getItem() {
         return item;
     }
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

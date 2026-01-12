@@ -32,7 +32,7 @@ public abstract class BaseGui {
     /**
      * Updates gui items with info from the player.
      *
-     * @param player Player to provide the info.
+     * @param player    Player to provide the info.
      * @param firstLoad Whether or not this refresh is caused by {@link ShopManager#open(Player, BaseGui)}.
      */
     public abstract void refresh(final Player player, final boolean firstLoad);
@@ -41,7 +41,7 @@ public abstract class BaseGui {
      * Handles inventory click for gui.
      *
      * @param player Player that clicked in the gui.
-     * @param slot Slot that was clicked.
+     * @param slot   Slot that was clicked.
      * @return true if a purchase was made. false otherwise
      */
     public abstract boolean handle(final Player player, final int slot);

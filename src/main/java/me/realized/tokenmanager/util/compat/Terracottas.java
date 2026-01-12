@@ -1,8 +1,9 @@
 package me.realized.tokenmanager.util.compat;
 
+import org.bukkit.Material;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.Material;
 
 public final class Terracottas {
 
@@ -27,9 +28,10 @@ public final class Terracottas {
         DATA_TO_TERRACOTTA.put((short) 15, "BLACK_TERRACOTTA");
     }
 
+    private Terracottas() {
+    }
+
     public static Material from(final short data) {
         return Material.getMaterial(DATA_TO_TERRACOTTA.get(data));
     }
-
-    private Terracottas() {}
 }

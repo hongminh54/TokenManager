@@ -7,9 +7,19 @@ import me.realized.tokenmanager.shop.ShopConfig;
 import me.realized.tokenmanager.shop.ShopManager;
 import me.realized.tokenmanager.util.command.AbstractCommand;
 import me.realized.tokenmanager.util.profile.ProfileUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class BaseCommand extends AbstractCommand<TokenManagerPlugin> {
+
+    protected static final List<String> TAB_AMOUNTS = Arrays.asList(
+            "5", "10", "25", "50", "75", "100", "500", "1000"
+    );
 
     protected final Config config;
     protected final ShopConfig shopConfig;
@@ -22,7 +32,7 @@ public abstract class BaseCommand extends AbstractCommand<TokenManagerPlugin> {
     }
 
     public BaseCommand(final TokenManagerPlugin plugin, final String name, final String usage, final String permission, final int length,
-        final boolean playerOnly, final String... aliases) {
+                       final boolean playerOnly, final String... aliases) {
         super(plugin, name, usage, permission, length, playerOnly, aliases);
         this.config = plugin.getConfiguration();
         this.shopConfig = plugin.getShopConfig();
@@ -35,6 +45,21 @@ public abstract class BaseCommand extends AbstractCommand<TokenManagerPlugin> {
 
     protected void sendMessage(final CommandSender receiver, final boolean config, final String in, final Object... replacers) {
         plugin.getLang().sendMessage(receiver, config, in, replacers);
+    }
+
+    protected final List<String> tabCompleteOnlinePlayers(final String prefixInput) {
+        final String prefix = prefixInput != null ? prefixInput.toLowerCase() : "";
+        final List<String> result = new ArrayList<>();
+
+        for (final Player player : Bukkit.getOnlinePlayers()) {
+            final String name = player.getName();
+
+            if (prefix.isEmpty() || name.toLowerCase().startsWith(prefix)) {
+                result.add(name);
+            }
+        }
+
+        return result;
     }
 
     @Override

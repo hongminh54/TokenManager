@@ -1,11 +1,6 @@
 package me.realized.tokenmanager.config;
 
 import com.google.common.collect.Sets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.util.Log;
 import me.realized.tokenmanager.util.Placeholders;
@@ -17,6 +12,12 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 public class Lang extends AbstractConfiguration<TokenManagerPlugin> implements Reloadable {
 
@@ -156,7 +157,8 @@ public class Lang extends AbstractConfiguration<TokenManagerPlugin> implements R
 
     private static class Converter2_3 implements Converter {
 
-        Converter2_3() {}
+        Converter2_3() {
+        }
 
         @Override
         public Map<String, String> renamedKeys() {

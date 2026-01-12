@@ -1,19 +1,21 @@
 package me.realized.tokenmanager.util;
 
+import me.realized.tokenmanager.util.compat.CompatUtil;
+import org.bukkit.ChatColor;
+
 import java.util.List;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import me.realized.tokenmanager.util.compat.CompatUtil;
-import org.bukkit.ChatColor;
 
 public final class StringUtil {
 
     private static final Pattern HEX_PATTERN = Pattern.compile(
-        "(?i)(?:&#|#|<#|\\{#)([0-9a-f]{6})(?:>|\\})?"
+            "(?i)(?:&#|#|<#|\\{#)([0-9a-f]{6})(?:>|\\})?"
     );
 
-    private StringUtil() {}
+    private StringUtil() {
+    }
 
     public static String fromList(final List<?> list) {
         StringBuilder builder = new StringBuilder();

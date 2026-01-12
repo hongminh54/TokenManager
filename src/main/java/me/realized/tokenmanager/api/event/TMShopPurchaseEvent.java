@@ -18,6 +18,10 @@ public class TMShopPurchaseEvent extends TMEvent {
         this.slot = slot;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     public Shop getShop() {
         return shop;
     }
@@ -28,10 +32,6 @@ public class TMShopPurchaseEvent extends TMEvent {
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

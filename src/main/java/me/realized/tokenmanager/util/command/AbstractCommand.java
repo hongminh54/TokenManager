@@ -1,12 +1,6 @@
 package me.realized.tokenmanager.util.command;
 
 import com.google.common.collect.Lists;
-import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import me.realized.tokenmanager.util.StringUtil;
 import org.bukkit.command.CommandSender;
@@ -14,6 +8,13 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class AbstractCommand<P extends JavaPlugin> implements TabCompleter {
 
@@ -33,9 +34,10 @@ public abstract class AbstractCommand<P extends JavaPlugin> implements TabComple
     private final List<String> aliases;
 
     private Map<String, AbstractCommand<P>> children;
+    private List<String> childNames;
 
     public AbstractCommand(final P plugin, final String name, final String usage, final String permission, final int length,
-        final boolean playerOnly, final String... aliases) {
+                           final boolean playerOnly, final String... aliases) {
         this.plugin = plugin;
         this.name = name;
         this.usage = usage;
@@ -63,6 +65,8 @@ public abstract class AbstractCommand<P extends JavaPlugin> implements TabComple
                 children.put(alias.toLowerCase(), child);
             }
         }
+
+        childNames = null;
     }
 
     protected void handleMessage(final CommandSender sender, final MessageType type, final String... args) {
@@ -148,12 +152,42 @@ public abstract class AbstractCommand<P extends JavaPlugin> implements TabComple
         }
 
         if (args.length == 1 && children != null) {
-            return children.values().stream()
-                .filter(child -> child.getName().startsWith(args[0].toLowerCase()))
-                .map(AbstractCommand::getName)
-                .distinct()
-                .sorted(String::compareTo)
-                .collect(Collectors.toList());
+            final String prefix = args[0] != null ? args[0].toLowerCase() : "";
+            final boolean isPlayer = sender instanceof Player;
+
+            if (childNames == null) {
+                childNames = children.values().stream()
+                        .map(AbstractCommand::getName)
+                        .distinct()
+                        .sorted(String::compareTo)
+                        .collect(Collectors.toList());
+            }
+
+            final List<String> result = Lists.newArrayList();
+
+            for (final String name : childNames) {
+                final AbstractCommand<P> child = children.get(name.toLowerCase());
+
+                if (child == null) {
+                    continue;
+                }
+
+                if (child.isPlayerOnly() && !isPlayer) {
+                    continue;
+                }
+
+                final String permission = child.getPermission();
+
+                if (permission != null && !sender.hasPermission(permission)) {
+                    continue;
+                }
+
+                if (prefix.isEmpty() || name.toLowerCase().startsWith(prefix)) {
+                    result.add(name);
+                }
+            }
+
+            return result.isEmpty() ? null : result;
         }
 
         return null;

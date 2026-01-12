@@ -1,8 +1,5 @@
 package me.realized.tokenmanager.command.commands.subcommands;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.OptionalLong;
 import me.realized.tokenmanager.Permissions;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.api.event.TMTokenSendEvent;
@@ -14,9 +11,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SendCommand extends BaseCommand {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.OptionalLong;
 
-    private static final List<String> TAB_AMOUNTS = Arrays.asList("5", "10", "25", "50", "75", "100", "500", "1000");
+public class SendCommand extends BaseCommand {
 
     public SendCommand(final TokenManagerPlugin plugin) {
         super(plugin, "send", "send <username> <amount>", Permissions.CMD_SEND, 3, true);
@@ -93,8 +92,22 @@ public class SendCommand extends BaseCommand {
 
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+        if (args.length == 2) {
+            return tabCompleteOnlinePlayers(args[1]);
+        }
+
         if (args.length == 3) {
-            return TAB_AMOUNTS;
+            final String prefix = args[2] != null ? args[2].toLowerCase() : "";
+
+            final List<String> result = new ArrayList<>();
+
+            for (final String amount : TAB_AMOUNTS) {
+                if (prefix.isEmpty() || amount.startsWith(prefix)) {
+                    result.add(amount);
+                }
+            }
+
+            return result;
         }
 
         return null;

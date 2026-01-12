@@ -7,6 +7,9 @@ public final class NumberUtil {
 
     private static final DecimalFormat COMMA_FORMAT = new DecimalFormat("#,###");
 
+    private NumberUtil() {
+    }
+
     /**
      * Copy of {@link Long#parseLong(String)} but returns an empty {@link OptionalLong} instead of throwing a {@link NumberFormatException}.
      *
@@ -83,7 +86,4 @@ public final class NumberUtil {
         otherVersion = otherVersion.replace("-SNAPSHOT", "").replace(".", "");
         return NumberUtil.parseLong(version).orElse(0) < NumberUtil.parseLong(otherVersion).orElse(0);
     }
-
-
-    private NumberUtil() {}
 }

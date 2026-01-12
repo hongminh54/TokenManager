@@ -2,20 +2,6 @@ package me.realized.tokenmanager.data.database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.OptionalLong;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.command.commands.subcommands.OfflineCommand.ModifyType;
 import me.realized.tokenmanager.config.Config;
@@ -29,6 +15,15 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class FileDatabase extends AbstractDatabase {
 
@@ -137,10 +132,12 @@ public class FileDatabase extends AbstractDatabase {
     }
 
     @Override
-    public void load(final Player player) {}
+    public void load(final Player player) {
+    }
 
     @Override
-    public void save(final Player player) {}
+    public void save(final Player player) {
+    }
 
     @Override
     public void shutdown() throws IOException {
@@ -186,7 +183,7 @@ public class FileDatabase extends AbstractDatabase {
         final Config config = plugin.getConfiguration();
         final String table = sanitizeTableName(config.getMysqlTable());
         final String query = String
-            .format("SELECT %s, tokens FROM %s;", online ? "uuid" : "name", table);
+                .format("SELECT %s, tokens FROM %s;", online ? "uuid" : "name", table);
         final HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl("jdbc:mysql://" + config.getMysqlHostname() + ":" + config.getMysqlPort() + "/" + config.getMysqlDatabase());
         hikariConfig.setDriverClassName("com.mysql." + (CompatUtil.isPre1_17() ? "jdbc" : "cj") + ".Driver");
@@ -198,10 +195,10 @@ public class FileDatabase extends AbstractDatabase {
             sender.sendMessage(ChatColor.BLUE + plugin.getDescription().getFullName() + ": Loading user data from MySQL database...");
 
             try (
-                HikariDataSource dataSource = new HikariDataSource(hikariConfig);
-                Connection connection = dataSource.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query);
-                ResultSet resultSet = statement.executeQuery()
+                    HikariDataSource dataSource = new HikariDataSource(hikariConfig);
+                    Connection connection = dataSource.getConnection();
+                    PreparedStatement statement = connection.prepareStatement(query);
+                    ResultSet resultSet = statement.executeQuery()
             ) {
                 sender.sendMessage(ChatColor.BLUE + plugin.getDescription().getFullName() + ": Load Complete. Starting the transfer...");
 

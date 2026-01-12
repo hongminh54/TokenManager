@@ -74,7 +74,6 @@ data:
   # 2. If you're using Essentials Economy, make sure to reset everyone's balance
   # before enabling this option! Otherwise, the old Essentials balance of the players
   # might act as a token balance.
-  #
   register-economy: false
 
   # /token top will be updated every x minutes. Value must be higher than 0!

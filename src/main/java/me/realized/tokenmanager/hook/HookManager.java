@@ -20,5 +20,6 @@ public class HookManager extends AbstractHookManager<TokenManagerPlugin> {
     }
 
     @Override
-    public void handleUnload() {}
+    public void handleUnload() {
+    }
 }

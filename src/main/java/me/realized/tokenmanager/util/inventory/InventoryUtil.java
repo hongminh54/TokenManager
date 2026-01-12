@@ -9,7 +9,8 @@ import org.bukkit.inventory.ItemStack;
 
 public final class InventoryUtil {
 
-    private InventoryUtil() {}
+    private InventoryUtil() {
+    }
 
     public static Inventory deepCopyOf(final Inventory inventory, final String title) {
         final Inventory result = Bukkit.createInventory(null, inventory.getSize(), StringUtil.color(title));
