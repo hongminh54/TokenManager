@@ -1,5 +1,6 @@
 package me.realized.tokenmanager.util.compat;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.realized.tokenmanager.util.inventory.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -37,6 +38,12 @@ public final class Items {
         Material material = Material.matchMaterial(name);
         if (material == null) {
             material = Material.getMaterial(name);
+        }
+
+        if (material == null) {
+            material = XMaterial.matchXMaterial(name)
+                .map(XMaterial::parseMaterial)
+                .orElse(null);
         }
 
         return material != null ? material : Material.AIR;

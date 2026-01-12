@@ -47,7 +47,7 @@ public class Shop {
         }
 
         this.title = StringUtil.color(title);
-        this.inventory = Bukkit.createInventory(null, rows * 9, title);
+        this.inventory = Bukkit.createInventory(null, rows * 9, this.title);
         this.autoClose = autoClose;
         this.usePermission = usePermission;
         this.confirmPurchase = confirmPurchase;

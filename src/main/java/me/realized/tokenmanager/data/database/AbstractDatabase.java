@@ -21,6 +21,15 @@ public abstract class AbstractDatabase implements Database {
         this.online = mode.equals("auto") ? ProfileUtil.isOnlineMode() : mode.equals("true");
     }
 
+    protected static String sanitizeTableName(final String input) {
+        if (input == null || input.isEmpty()) {
+            return "tokenmanager";
+        }
+
+        final String sanitized = input.replaceAll("[^A-Za-z0-9_]", "");
+        return sanitized.isEmpty() ? "tokenmanager" : sanitized;
+    }
+
     @Override
     public boolean isOnlineMode() {
         return online;

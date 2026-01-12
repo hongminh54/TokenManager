@@ -10,13 +10,16 @@ version '3.2.8'
 
 def spigotApiVersion = (findProperty('spigotApiVersion') ?: '1.8.8-R0.1-SNAPSHOT').toString()
 
+compileJava.options.encoding = 'UTF-8'
+
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
-    }
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-compileJava.options.encoding = 'UTF-8'
+tasks.withType(JavaCompile).configureEach {
+    options.release = 8
+}
 
 processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
@@ -123,6 +126,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-nop:1.7.36'
     implementation 'org.bstats:bstats-bukkit:3.1.0'
     compileOnly("com.github.hongminh54:Storage:2.3.5-SNAPSHOT")
+    implementation("com.github.cryptomorin:XSeries:13.6.0")
     compileOnly("net.luckperms:api:5.5")
     implementation("org.codemc.worldguardwrapper:worldguardwrapper:1.2.1-SNAPSHOT")
 }
@@ -143,15 +147,18 @@ shadowJar {
         include(dependency('com.zaxxer:.*'))
         include(dependency('org.slf4j:.*'))
         include(dependency('org.bstats:.*'))
+        include(dependency('com.github.cryptomorin:.*'))
+
     }
 
-    def group = project.group.toString() + "." + project.name.toLowerCase() + ".shaded."
+    def group = project.group.toString() + "." + project.name.toLowerCase() + ".libs."
 
     relocate 'redis.clients', group + 'redis.clients'
     relocate 'org.apache.commons.pool2', group + 'apache.commons.pool2'
     relocate 'com.zaxxer.hikari', group + 'zaxxer.hikari'
     relocate 'org.slf4j', group + "slf4j"
     relocate 'org.bstats', group + 'bstats'
+    relocate 'com.github.cryptomorin', group + "xseries"
 }
 
 build.dependsOn(shadowJar)

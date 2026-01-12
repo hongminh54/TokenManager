@@ -12,8 +12,47 @@ public final class ReflectionUtil {
 
     static {
         final String packageName = Bukkit.getServer().getClass().getPackage().getName();
-        PACKAGE_VERSION = packageName.substring(packageName.lastIndexOf('.') + 1);
-        MAJOR_VERSION = (int) NumberUtil.parseLong(PACKAGE_VERSION.split("_")[1]).orElse(0);
+        final String token = packageName.substring(packageName.lastIndexOf('.') + 1);
+
+        if (token.startsWith("v") && token.contains("_")) {
+            PACKAGE_VERSION = token;
+
+            final String[] parts = token.split("_");
+            if (parts.length > 1) {
+                MAJOR_VERSION = (int) NumberUtil.parseLong(parts[1]).orElse(0);
+            } else {
+                MAJOR_VERSION = 0;
+            }
+        } else {
+            PACKAGE_VERSION = "";
+            MAJOR_VERSION = detectMajorFromBukkitVersion();
+        }
+    }
+
+    private static int detectMajorFromBukkitVersion() {
+        try {
+            final String bukkitVersion = Bukkit.getBukkitVersion();
+            final int idx = bukkitVersion.indexOf("1.");
+            if (idx == -1) {
+                return 0;
+            }
+
+            final int start = idx + 2;
+            int end = start;
+            while (end < bukkitVersion.length()
+                && Character.isDigit(bukkitVersion.charAt(end))) {
+                end++;
+            }
+
+            if (end == start) {
+                return 0;
+            }
+
+            return (int) NumberUtil.parseLong(bukkitVersion.substring(start, end))
+                .orElse(0);
+        } catch (Exception ex) {
+            return 0;
+        }
     }
 
     public static int getMajorVersion() {
@@ -42,7 +81,13 @@ public final class ReflectionUtil {
 
     public static Class<?> getNMSClass(final String name, final boolean logError) {
         try {
-            return Class.forName("net.minecraft" + (getMajorVersion() < 17 ? (".server." + PACKAGE_VERSION) : "") + "." + name);
+            if (getMajorVersion() < 17 && !PACKAGE_VERSION.isEmpty()) {
+                return Class.forName(
+                    "net.minecraft.server." + PACKAGE_VERSION + "." + name
+                );
+            }
+
+            return Class.forName("net.minecraft." + name);
         } catch (ClassNotFoundException ex) {
             if (logError) {
                 ex.printStackTrace();
@@ -58,7 +103,9 @@ public final class ReflectionUtil {
 
     public static Class<?> getCBClass(final String path, final boolean logError) {
         try {
-            return Class.forName("org.bukkit.craftbukkit." + PACKAGE_VERSION + "." + path);
+            final String base = "org.bukkit.craftbukkit";
+            final String version = PACKAGE_VERSION.isEmpty() ? "" : ("." + PACKAGE_VERSION);
+            return Class.forName(base + version + "." + path);
         } catch (ClassNotFoundException ex) {
             if (logError) {
                 ex.printStackTrace();

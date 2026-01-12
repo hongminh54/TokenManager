@@ -3,6 +3,7 @@ package me.realized.tokenmanager.config;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.OptionalLong;
+import com.cryptomorin.xseries.XMaterial;
 import me.realized.tokenmanager.TokenManagerPlugin;
 import me.realized.tokenmanager.util.Reloadable;
 import me.realized.tokenmanager.util.compat.CompatUtil;
@@ -23,7 +24,13 @@ public class WorthConfig extends AbstractConfiguration<TokenManagerPlugin> imple
     @Override
     protected void loadValues(final FileConfiguration configuration) {
         configuration.getKeys(false).forEach(key -> {
-            final Material type = Material.getMaterial(key);
+            Material type = Material.getMaterial(key);
+
+            if (type == null) {
+                type = XMaterial.matchXMaterial(key)
+                    .map(XMaterial::parseMaterial)
+                    .orElse(null);
+            }
 
             if (type == null) {
                 return;

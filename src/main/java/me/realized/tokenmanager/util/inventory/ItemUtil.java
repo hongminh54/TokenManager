@@ -16,6 +16,7 @@ import me.realized.tokenmanager.util.compat.Items;
 import me.realized.tokenmanager.util.compat.Skulls;
 import me.realized.tokenmanager.util.compat.SpawnEggs;
 import me.realized.tokenmanager.util.compat.Terracottas;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -112,12 +113,49 @@ public final class ItemUtil {
         }
 
         final String[] args = line.split(" +");
+
+        final java.util.Optional<XMaterial> parsedMaterial = XMaterial.matchXMaterial(args[0]);
+        if (parsedMaterial.isPresent()) {
+            final ItemStack parsed = parsedMaterial.get().parseItem();
+            if (parsed != null) {
+                final ItemStack result = parsed;
+
+                if (args.length < 2) {
+                    return result;
+                }
+
+                result.setAmount(Integer.parseInt(args[1]));
+
+                if (args.length > 2) {
+                    for (int i = 2; i < args.length; i++) {
+                        final String argument = args[i];
+                        final String[] pair = argument.split(":", 2);
+
+                        if (pair.length < 2) {
+                            continue;
+                        }
+
+                        applyMeta(result, pair[0], pair[1]);
+                    }
+                }
+
+                return result;
+            }
+        }
+
         String[] materialData = args[0].split(":");
-        Material material = Material.matchMaterial(materialData[0]);
+        final String materialName = materialData[0];
+        Material material = Material.matchMaterial(materialName);
+
+        if (material == null) {
+            material = XMaterial.matchXMaterial(materialName)
+                .map(XMaterial::parseMaterial)
+                .orElse(null);
+        }
 
         // TEMP: Allow confirm button item loading in 1.13
         if (!CompatUtil.isPre1_13()) {
-            if (materialData[0].equalsIgnoreCase("STAINED_CLAY")) {
+            if (materialName.equalsIgnoreCase("STAINED_CLAY")) {
                 material = Material.matchMaterial("TERRACOTTA");
 
                 if (materialData.length > 1) {
@@ -227,11 +265,7 @@ public final class ItemUtil {
         }
 
         if (key.equalsIgnoreCase("unbreakable") && value.equalsIgnoreCase("true")) {
-            if (CompatUtil.isPre1_12()) {
-                meta.spigot().setUnbreakable(true);
-            } else {
-                CompatUtil.setUnbreakable(meta, true);
-            }
+            CompatUtil.setUnbreakable(meta, true);
 
             item.setItemMeta(meta);
             return;

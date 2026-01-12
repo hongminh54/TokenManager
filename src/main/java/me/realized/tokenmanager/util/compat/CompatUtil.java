@@ -25,6 +25,8 @@ public final class CompatUtil {
     private static final Method ENCHANTMENT_GET_KEY;
     private static final Method NAMESPACEDKEY_GET_KEY;
     private static final Method ITEMMETA_SET_UNBREAKABLE;
+    private static final Method ITEMMETA_SPIGOT;
+    private static final Method ITEMMETA_SPIGOT_SET_UNBREAKABLE;
     private static final Method ITEMMETA_SET_CUSTOM_MODEL_DATA;
     private static final Method POTIONMETA_SET_BASE_POTION_DATA;
 
@@ -42,6 +44,12 @@ public final class CompatUtil {
             "getKey"
         );
         ITEMMETA_SET_UNBREAKABLE = ReflectionUtil.getMethodUnsafe(ItemMeta.class, "setUnbreakable", boolean.class);
+
+        ITEMMETA_SPIGOT = ReflectionUtil.getMethodUnsafe(ItemMeta.class, "spigot");
+        ITEMMETA_SPIGOT_SET_UNBREAKABLE = ITEMMETA_SPIGOT != null
+            ? ReflectionUtil.getMethodUnsafe(ITEMMETA_SPIGOT.getReturnType(), "setUnbreakable", boolean.class)
+            : null;
+
         ITEMMETA_SET_CUSTOM_MODEL_DATA = ReflectionUtil.getMethodUnsafe(ItemMeta.class, "setCustomModelData", Integer.class);
         POTIONMETA_SET_BASE_POTION_DATA = ReflectionUtil.getMethodUnsafe(
             PotionMeta.class,
@@ -219,16 +227,34 @@ public final class CompatUtil {
     }
 
     public static boolean setUnbreakable(final ItemMeta meta, final boolean unbreakable) {
-        if (meta == null || ITEMMETA_SET_UNBREAKABLE == null) {
+        if (meta == null) {
             return false;
         }
 
-        try {
-            ITEMMETA_SET_UNBREAKABLE.invoke(meta, unbreakable);
-            return true;
-        } catch (Exception ignored) {
-            return false;
+        if (ITEMMETA_SET_UNBREAKABLE != null) {
+            try {
+                ITEMMETA_SET_UNBREAKABLE.invoke(meta, unbreakable);
+                return true;
+            } catch (Exception ignored) {
+                return false;
+            }
         }
+
+        if (ITEMMETA_SPIGOT != null && ITEMMETA_SPIGOT_SET_UNBREAKABLE != null) {
+            try {
+                final Object spigot = ITEMMETA_SPIGOT.invoke(meta);
+                if (spigot == null) {
+                    return false;
+                }
+
+                ITEMMETA_SPIGOT_SET_UNBREAKABLE.invoke(spigot, unbreakable);
+                return true;
+            } catch (Exception ignored) {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     public static boolean setCustomModelData(final ItemMeta meta, final int customModelData) {

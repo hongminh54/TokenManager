@@ -13,7 +13,7 @@ public final class ItemBuilder {
     private final ItemStack result;
 
     private ItemBuilder(final Material type, final int amount, final short durability) {
-        this.result = new ItemStack(type, amount);
+        this.result = new ItemStack(type != null ? type : Material.AIR, amount);
         CompatUtil.setDurability(result, durability);
     }
 
@@ -34,9 +34,11 @@ public final class ItemBuilder {
     }
 
     public ItemBuilder name(final String name) {
-        ItemMeta meta = result.getItemMeta();
-        meta.setDisplayName(StringUtil.color(name));
-        result.setItemMeta(meta);
+        final ItemMeta meta = result.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(StringUtil.color(name));
+            result.setItemMeta(meta);
+        }
         return this;
     }
 
@@ -45,9 +47,11 @@ public final class ItemBuilder {
     }
 
     public ItemBuilder lore(final List<String> lore) {
-        ItemMeta meta = result.getItemMeta();
-        meta.setLore(StringUtil.color(lore));
-        result.setItemMeta(meta);
+        final ItemMeta meta = result.getItemMeta();
+        if (meta != null) {
+            meta.setLore(StringUtil.color(lore));
+            result.setItemMeta(meta);
+        }
         return this;
     }
 
